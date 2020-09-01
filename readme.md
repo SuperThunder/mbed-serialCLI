@@ -6,4 +6,6 @@ Goal is to allow for easy basic command parsing of the form
 
 For now, takes over the serial RX and requries a printf function to call for TX
 
+Currently uses mbed 5.15, will update to mbed 6 when it's less broken.
+
 License: GPL v3
