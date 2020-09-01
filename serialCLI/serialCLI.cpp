@@ -5,7 +5,7 @@
  *
  * @return      N/A
  *
- * @author      kuutei
+ * @author      
  * @date        
  * @version     
  * @pre         N/A.
@@ -15,7 +15,7 @@
 
 #include "serialCLI.h"
 
-serialCLI::serialCLI(BufferedSerial* serialInterface, Thread* serialCLIThread)
+serialCLI::serialCLI(UARTSerial* serialInterface, Thread* serialCLIThread)
 {
     //init Rx buffer to zeros
     this->flushRXBuffer();
@@ -70,7 +70,7 @@ void serialCLI::inputReceiveThread()
                 {
                     //send each line to inputProcessThread by Mail
                     //In future alloc will block if no mem available, overall probably desirable behaviour for this thread
-                    mail_str = this->line_mail.try_alloc();
+                    mail_str = this->line_mail.alloc();
 
                     if(mail_str != 0)
                     {
@@ -78,15 +78,13 @@ void serialCLI::inputReceiveThread()
                         *mail_str = "test";
                     }
 
-                    //*mail_str = "test";
-                    //std::string tmpstr(this->RXBUFFER+last_newline_index+1, i - last_newline_index);
                     //create a string that consists from the character after the previous newline to the currently found newline
+                    //std::string tmpstr(this->RXBUFFER+last_newline_index+1, i - last_newline_index);
                     
-                    //weird linker errors
                     //assign(const char* s, size_t n)
-                    //tmpstr->assign(RXBUFFER+last_newline_index+1, i - last_newline_index);
+                    mail_str->assign(RXBUFFER+last_newline_index+1, i - last_newline_index);
 
-                    //this->line_mail.put(tmpstr);
+                    this->line_mail.put(mail_str);
 
                     last_newline_index = i;
                 }
@@ -96,7 +94,7 @@ void serialCLI::inputReceiveThread()
             serialInterface->write(this->RXBUFFER, read_status);
 		}   
          
-        ThisThread::sleep_for(10ms);   
+        ThisThread::sleep_for(10);   
     }
 }
 

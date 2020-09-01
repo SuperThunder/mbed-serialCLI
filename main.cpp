@@ -4,7 +4,10 @@
 
 #include "serialCLI.h"
 
-static BufferedSerial pc(USBTX,USBRX,115200);
+//mbed 6
+//static BufferedSerial pc(USBTX,USBRX,115200);
+UARTSerial pc(USBTX,USBRX,115200);
+
 
 
 InterruptIn chargeButton(USER_BUTTON);
@@ -18,7 +21,7 @@ void blinkled()
     
     while (true) {
         led = !led;
-        ThisThread::sleep_for(1s);
+        ThisThread::sleep_for(1000);
     }
 }
 
@@ -61,7 +64,7 @@ int main()
     
     while(true)
     {
-        ThisThread::sleep_for(1s);
+        ThisThread::sleep_for(1000);
     }
     
 }

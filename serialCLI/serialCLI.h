@@ -5,7 +5,7 @@
  *
  * @return      N/A
  *
- * @author      kuutei
+ * @author      
  * @date        
  * @version     
  * @pre         N/A.
@@ -25,14 +25,15 @@
 #include "mbed.h"
 
 #include <string>
-#include <cwchar>
+#include "UARTSerial.h"
+
 
 
 class serialCLI
 {
     public:
         //take the serial interface to read bytes from, and Thread variable from 
-        serialCLI(BufferedSerial* serialInterface, Thread* serialCLIThread);
+        serialCLI(UARTSerial* serialInterface, Thread* serialCLIThread);
 
         //attach a handler for a given command
         //handlers are passed a string of everything after the command and whitespace
@@ -61,7 +62,7 @@ class serialCLI
         //std::function<uint32_t(std::string)> printf_callback;
 
         //Or just directly point to Serial object instead?
-        BufferedSerial* serialInterface;
+        UARTSerial* serialInterface;
 
         //Thread which is running the serial receive code
         //Keep track of it so destructor can stop the serial receive thread
