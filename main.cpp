@@ -6,12 +6,11 @@
 
 //mbed 6
 //static BufferedSerial pc(USBTX,USBRX,115200);
+
+//mbed 5
 UARTSerial pc(USBTX,USBRX,115200);
 
-
-
-InterruptIn chargeButton(USER_BUTTON);
-volatile bool buttonPressed = false; //set to true by button ISR, set to false when acknowledged
+uint32_t testint1 = 0;
 
 
 void blinkled()
@@ -25,32 +24,54 @@ void blinkled()
     }
 }
 
-
-// Button to initiate / stop charging
-// Called on button rise
-// Set to true to signal to EN control thread that button was pressed
-void buttonISR()
+//from https://stackoverflow.com/questions/194465/how-to-parse-a-string-to-an-int-in-c
+bool str2int (int32_t &i, const char* s)
 {
-    static uint64_t lastButtonPushTime = 0;
-    
-    uint64_t now = Kernel::get_ms_count();
-    
-    const uint64_t buttonMinimumWaitTime = 500; //minimum 500 ms wait between button pushes
-    
-    if(now - lastButtonPushTime > buttonMinimumWaitTime)
-    {
-        buttonPressed = true;
-        lastButtonPushTime = now;
+    char              c;
+    std::stringstream ss(s);
+    ss >> i;
+    if (ss.fail() || ss.get(c)) {
+        // not an integer
+        return false;
     }
-       
+    return true;
 }
 
-int32_t handler1(std::string* args, serialCLI::lineCommandType command_type)
+void helpHandler(std::string* args, serialCLI::lineCommandType command_type, serialCLI* cli)
 {
-    printf("\r\nHandler1 called\r\n");
-
-    return 0;
+    cli->vprintfCLI("I: Help handler called with args: \'%s\'\r\n", args->c_str() );
 }
+
+//test out setting of integer and error conditions
+//TODO: takes callback to printf wrapper around serialInterface->write instead
+//      eventqueue, or mail handled by output thread
+void setIntTest(std::string* args, serialCLI::lineCommandType command_type, serialCLI* cli)
+{
+    cli->vprintfCLI("I: Testint1 handler called with command type %d args: \'%s\'\r\n", command_type, args->c_str() );
+
+    int32_t tmpint;
+    //if get, return value
+    if(command_type == serialCLI::lineCommandType::GET)
+    {
+        cli->vprintfCLI("D: test1, %d \r\n", testint1);
+    }
+    //if set, set value
+    else if(command_type == serialCLI::lineCommandType::SET)
+    {
+        //parse argument content to integer
+        if( str2int(tmpint, args->c_str() ) )
+        {
+            testint1 = tmpint;
+            cli->vprintfCLI("I: testint1 set to %d \r\n", testint1);
+        }
+        else
+        {
+            cli->vprintfCLI("E: Invalid set value for testint1 %s\r\n", args->c_str());
+        }
+    }
+
+}
+
 
 int main()
 {
@@ -61,12 +82,10 @@ int main()
     //osStatus err =  led1.start(&blinkled);
     led1.start(blinkled);
 
-    // START/STOP CHARGE BUTTON
-    chargeButton.rise(&buttonISR);
-
     serialCLI cli(&pc);
 
-    cli.attachVariableHandler("testval", handler1 );
+    cli.attachVariableHandler("help", helpHandler );
+    cli.attachVariableHandler("test1", setIntTest );
 
     
     while(true)

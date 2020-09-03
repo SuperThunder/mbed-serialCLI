@@ -21,6 +21,8 @@
 //      - possibly yes, if very long lines need to be received
 #define CLI_RX_BUFFER_SIZE 256
 
+//TODO: testing needed on how often these need to run, especially to use higher (115200+) serial speeds
+//      - on the whole the bandwidth heavy part will probably be TX
 #define RX_CHECK_INTERVAL_ms 10
 #define RX_PROCESS_INTERVAL_ms 10
 
@@ -46,9 +48,18 @@ class serialCLI
 
         //attach a handler for a given command
         //handlers are passed a string of everything after the command and whitespace
-        int32_t attachVariableHandler(std::string command, std::function<int32_t(std::string*, lineCommandType)> command_handler);
+        int32_t attachVariableHandler(std::string command, std::function<void(std::string*, lineCommandType, serialCLI*)> command_handler);
+
+        //Handles serial output by wrapping around write()
+        //public so that main program threads can use the same interface
+        //TODO: make extra wrappers printfErrorLine, printfInfoLine, printfDataLine that prepend E:/I:/D: and append newline
+        void vprintfCLI(const char fmt[], ...);
+        //^named as vprintf because otherwise the compiler gets confused for something like printfCLI("val: %d", int1) and interprets int1 as a length
+        void printfCLI(const char* str, uint32_t len);
+        void printfCLI(std::string* str){ printfCLI(str->c_str(), str->length()); }
 
         ~serialCLI();
+
 
     private:
         //TODO: separate printf callback for debug messages?
@@ -68,20 +79,9 @@ class serialCLI
         //Buffer for receiving lines from Serial
         char RXBUFFER[CLI_RX_BUFFER_SIZE];
 
-        //parses a received serial line and calls the appropriate callback
-        //called only by input process thread
-        int32_t parseLine(char* buffer, uint32_t bufsize);
+        //todo: use static allocation here instead?
+        std::map< std::string, std::function<void(std::string*, lineCommandType, serialCLI*)> > _attachedCommands;
 
-        std::map< std::string, std::function<int32_t(std::string*, lineCommandType)> > _attachedCommands;
-
-        //use enum class so that we can use specific namespace line lineParseStates::get_Type
-        typedef enum class lineParseStates
-        {
-            get_Type,
-            get_VarName,
-            get_Value,
-            Done
-        };
 
         void wipeRXBuffer(); //set RXBUFFER to all zeros
 
