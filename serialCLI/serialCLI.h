@@ -21,43 +21,40 @@
 //      - possibly yes, if very long lines need to be received
 #define CLI_RX_BUFFER_SIZE 256
 
-#define RX_CHECK_INTERVAL_ms 5
-#define RX_PROCESS_INTERVAL_ms 100
+#define RX_CHECK_INTERVAL_ms 10
+#define RX_PROCESS_INTERVAL_ms 10
 
 #include "mbed.h"
 
 #include <string>
+#include <sstream>
+#include <map>
 #include "UARTSerial.h"
-
 
 
 class serialCLI
 {
     public:
+        typedef enum class lineCommandType
+        {
+            GET,
+            SET
+        };
+
         //take the serial interface to read bytes from, and Thread variable from 
         serialCLI(UARTSerial* serialInterface);
 
         //attach a handler for a given command
         //handlers are passed a string of everything after the command and whitespace
-        int32_t attachCommand(std::string command, std::function<int32_t(std::string content)> );
-
-        
-
-        uint32_t inputReceive_ProcessRxBuffer(ssize_t read_status);
-
-
-        //TODO: hook directly to serial Rx rather than using parseLine
-        //function to be attached in constructor to a serial interface Receive
-        //int32_t serialRxAttachment()
+        int32_t attachVariableHandler(std::string command, std::function<int32_t(std::string*, lineCommandType)> command_handler);
 
         ~serialCLI();
 
     private:
         //TODO: separate printf callback for debug messages?
         //Or as a way of thread-safe sharing of a serial port?
-        //std::function<uint32_t(std::string)> printf_callback;
 
-        //Or just directly point to Serial object instead?
+        //Pointer to serial object used for CLI
         UARTSerial* serialInterface;
 
         //Thread which is running the serial receive code
@@ -69,16 +66,24 @@ class serialCLI
         Mail<std::string, 16> line_mail;
 
         //Buffer for receiving lines from Serial
-        //TODO: Replace with CircularBuffer so that processing and writing can happen interleaved
         char RXBUFFER[CLI_RX_BUFFER_SIZE];
 
-        uint32_t RXBUFFER_INDEX;
-
         //parses a received serial line and calls the appropriate callback
-        //called only by input receive thread
+        //called only by input process thread
         int32_t parseLine(char* buffer, uint32_t bufsize);
 
-        void flushRXBuffer(); //set RXBUFFER to all zeros
+        std::map< std::string, std::function<int32_t(std::string*, lineCommandType)> > _attachedCommands;
+
+        //use enum class so that we can use specific namespace line lineParseStates::get_Type
+        typedef enum class lineParseStates
+        {
+            get_Type,
+            get_VarName,
+            get_Value,
+            Done
+        };
+
+        void wipeRXBuffer(); //set RXBUFFER to all zeros
 
         //receives bytes from serialInterface in a loop
         //call parseLine when a newline is received
