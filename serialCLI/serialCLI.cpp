@@ -157,7 +157,7 @@ void serialCLI::inputProcessThread()
 
             ss >> command_type >> var_name >> var_content;
 
-            debug("Parsed from line: >%s<||>%s<||>%s<\r\n", command_type.c_str(), var_name.c_str(), var_content.c_str());
+            debug("Parsed from line: ||%s||%s||%s||\r\n", command_type.c_str(), var_name.c_str(), var_content.c_str());
 
             //TODO: Have an EventQueue for the handler function calls?
             //TODO: should get/set have their own handlers, which then deal with the variable name?

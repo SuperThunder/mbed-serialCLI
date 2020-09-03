@@ -45,6 +45,13 @@ void buttonISR()
        
 }
 
+int32_t handler1(std::string* args, serialCLI::lineCommandType command_type)
+{
+    printf("\r\nHandler1 called\r\n");
+
+    return 0;
+}
+
 int main()
 {
     printf("Started serialCLI test program\r\n");
@@ -57,9 +64,9 @@ int main()
     // START/STOP CHARGE BUTTON
     chargeButton.rise(&buttonISR);
 
-    Thread cli_thread;
+    serialCLI cli(&pc);
 
-   serialCLI cli(&pc, &cli_thread);
+    cli.attachVariableHandler("testval", handler1 );
 
     
     while(true)
