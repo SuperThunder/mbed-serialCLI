@@ -17,10 +17,12 @@
 #ifndef serialCLI_H
 #define serialCLI_H
 
-//todo: is there any point to the CLI_RXBUFFER being larger than the RX circular buffer of the (default: 256 bytes) BufferedSerial object? 
-#define CLI_RX_BUFFER_SIZE 1024
+//todo: is there any point to the CLI_RXBUFFER being larger than the RX circular buffer of the (default: 256 bytes) BufferedSerial object?
+//      - possibly yes, if very long lines need to be received
+#define CLI_RX_BUFFER_SIZE 256
 
 #define RX_CHECK_INTERVAL_ms 5
+#define RX_PROCESS_INTERVAL_ms 100
 
 #include "mbed.h"
 
@@ -33,22 +35,16 @@ class serialCLI
 {
     public:
         //take the serial interface to read bytes from, and Thread variable from 
-        serialCLI(UARTSerial* serialInterface, Thread* serialCLIThread);
+        serialCLI(UARTSerial* serialInterface);
 
         //attach a handler for a given command
         //handlers are passed a string of everything after the command and whitespace
         int32_t attachCommand(std::string command, std::function<int32_t(std::string content)> );
 
-        //receives bytes from serialInterface in a loop
-        //call parseLine when a newline is received
-        void inputReceiveThread();
+        
 
-        //void inputProcess();
+        uint32_t inputReceive_ProcessRxBuffer(ssize_t read_status);
 
-        //void asyncRxCallbackHandler();
-
-        //called for each received byte, prints back. fills up buffer, signals to inputProcess when newline encountered
-        void inputReceiveISR();
 
         //TODO: hook directly to serial Rx rather than using parseLine
         //function to be attached in constructor to a serial interface Receive
@@ -65,8 +61,9 @@ class serialCLI
         UARTSerial* serialInterface;
 
         //Thread which is running the serial receive code
-        //Keep track of it so destructor can stop the serial receive thread
-        Thread* serialRxThread;
+        //Destructor will stop all threads
+        Thread _thread_serialReceive;
+        Thread _thread_serialProcess;
 
         //each line sent as a separate string as they are received
         Mail<std::string, 16> line_mail;
@@ -82,6 +79,11 @@ class serialCLI
         int32_t parseLine(char* buffer, uint32_t bufsize);
 
         void flushRXBuffer(); //set RXBUFFER to all zeros
+
+        //receives bytes from serialInterface in a loop
+        //call parseLine when a newline is received
+        void inputReceiveThread();
+        void inputProcessThread();
 
 };
 
