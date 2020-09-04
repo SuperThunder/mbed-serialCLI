@@ -39,7 +39,7 @@ bool str2int (int32_t &i, const char* s)
 
 void helpHandler(std::string* args, serialCLI::lineCommandType command_type, serialCLI* cli)
 {
-    cli->vprintfCLI("I: Help handler called with args: \'%s\'\r\n", args->c_str() );
+    cli->printfCLI("I: Help handler called with args: '%s'\r\n", args->c_str() );
 }
 
 //test out setting of integer and error conditions
@@ -47,13 +47,11 @@ void helpHandler(std::string* args, serialCLI::lineCommandType command_type, ser
 //      eventqueue, or mail handled by output thread
 void setIntTest(std::string* args, serialCLI::lineCommandType command_type, serialCLI* cli)
 {
-    cli->vprintfCLI("I: Testint1 handler called with command type %d args: \'%s\'\r\n", command_type, args->c_str() );
-
     int32_t tmpint;
     //if get, return value
     if(command_type == serialCLI::lineCommandType::GET)
     {
-        cli->vprintfCLI("D: test1, %d \r\n", testint1);
+        cli->printfCLI("D: test1,%d\r\n", testint1);
     }
     //if set, set value
     else if(command_type == serialCLI::lineCommandType::SET)
@@ -62,11 +60,11 @@ void setIntTest(std::string* args, serialCLI::lineCommandType command_type, seri
         if( str2int(tmpint, args->c_str() ) )
         {
             testint1 = tmpint;
-            cli->vprintfCLI("I: testint1 set to %d \r\n", testint1);
+            cli->printfCLI("I: testint1 set to '%d' \r\n", testint1);
         }
         else
         {
-            cli->vprintfCLI("E: Invalid set value for testint1 %s\r\n", args->c_str());
+            cli->printfCLI("E: Invalid set value for testint1 '%s'\r\n", args->c_str());
         }
     }
 

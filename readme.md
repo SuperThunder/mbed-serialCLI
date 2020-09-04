@@ -6,9 +6,14 @@ Goal is to allow for easy basic command parsing of the form
 - A user-defined handler for each variablename is called with the context of whether a GET or SET was requested
 - So 'variablename' doesn't have to correspond to an actual variable - 'get help' could print a help message and 'set mode lowpower' could completely change the operation of the device
 
-My motivating use case is to set and get parameters in an 18650 battery charging system.
+My motivating use case is to set and get parameters in an 18650 battery charging system, and be able to configure automated output.
 
-For now, effectively takes over the serial RX and uses the printf function to call for TX.
+For now, effectively takes over the serial RX (read()) and uses the write() function to call for TX.
+
+TODO:
+- Consider attaching commands rather than variable names (get/set would be their own commands)
+    - commands could live in their own header files per command or set of related commands
+
 
 Currently uses mbed 5.15, will update to mbed 6 when that's less broken.
 

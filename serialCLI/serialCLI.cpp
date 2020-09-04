@@ -15,7 +15,6 @@
 
 #include "serialCLI.h"
 
-//TODO: Replace printfs with call to queue handled by thread
 
 serialCLI::serialCLI(UARTSerial* serialInterface)
 {
@@ -41,14 +40,7 @@ int32_t serialCLI::attachVariableHandler(std::string command, std::function<void
     return 0;
 }
 
-void serialCLI::printfCLI(const char* strarr, uint32_t len)
-{
-    //make call to write() of serial interface
-    //TODO: enqueue calls in an EventQueue that always dispatches instead? may be useful if the blocking of this call becomes a problem
-    this->serialInterface->write(strarr, len);
-}
-
-void serialCLI::vprintfCLI(const char fmt[], ...)
+void serialCLI::printfCLI(const char fmt[], ...)
 {
     //sized to RX buffer size in case entire line needs to be written
     char buffer[CLI_RX_BUFFER_SIZE] = {0};
@@ -64,15 +56,15 @@ void serialCLI::vprintfCLI(const char fmt[], ...)
     
     if(vsn_retval > 0 && vsn_retval < CLI_RX_BUFFER_SIZE)
     {
-        this->printfCLI(buffer, vsn_retval);
+        this->write(buffer, vsn_retval);
     }
     else if(vsn_retval >= CLI_RX_BUFFER_SIZE)
     {
-        error("vsnprintf return value exceeded buffer size! (%d)\r\n", vsn_retval);
+        error("E: vsnprintf return value exceeded buffer size! (%d)\r\n", vsn_retval);
     }
     else
     {
-        error("vsnprintf negative value (%d)\r\n", vsn_retval);
+        error("E: vsnprintf negative value (%d)\r\n", vsn_retval);
     }
 }
 
@@ -83,7 +75,8 @@ void serialCLI::inputReceiveThread()
     
     ssize_t read_status;
     char* cur_char = 0;
-    uint32_t rxbuffer_index = 0, last_newline_index = -1, newline_count = 0;
+    //keep track of: index of last unused char in receive buffer, index of the last newline found in the receive buffer, and the number of newlines encountered in one pass over the newline buffer
+    uint32_t rxbuffer_index = 0, last_newline_index = -1;
     std::string* mail_str;
     
     while(true)
@@ -102,7 +95,6 @@ void serialCLI::inputReceiveThread()
                 //Also check for CR
                 if(*cur_char == '\n' || *cur_char == '\r')
                 {
-                    newline_count++;
 
                     //handle CR LF or LF CR cases by skipping the second char of the sequence
                     if( *(cur_char+1) == '\n' || *(cur_char+1) == '\r')
@@ -113,7 +105,7 @@ void serialCLI::inputReceiveThread()
                     //but send CR LF in either case
                     {
                         //if newline received, 
-                        this->vprintfCLI("\r\n");
+                        this->printfCLI("\r\n");
                     }
                     
 
@@ -145,14 +137,14 @@ void serialCLI::inputReceiveThread()
                 rxbuffer_index++;
             }
 
-            //if newline was last char, then we can reset buffer
+            //if newline was last char received, then we can reset buffer
+            //this is the main mechanism to avoid overflowing the receive buffer
             if(last_newline_index == rxbuffer_index-1)
             {
                 //debug("Resetting rxbuffer index %d->0\r\n", rxbuffer_index);
 
                 rxbuffer_index = 0;
                 last_newline_index = -1;
-                newline_count = 0;
             }
 		}
          
@@ -207,7 +199,7 @@ void serialCLI::inputProcessThread()
                 else
                 {
                     //show error if no matching variable name
-                    this->vprintfCLI("E: Unknown attached variable for GET \'%s\'\r\n", var_name.c_str() );
+                    this->printfCLI("E: Unknown attached variable for GET \'%s\'\r\n", var_name.c_str() );
                 }
             }
             else if(command_type == "set" || command_type == "SET")
@@ -220,12 +212,12 @@ void serialCLI::inputProcessThread()
                 }
                 else
                 {
-                    this->vprintfCLI("E: Unknown attached variable for SET \'%s\'\r\n", var_name.c_str() );
+                    this->printfCLI("E: Unknown attached variable for SET \'%s\'\r\n", var_name.c_str() );
                 }
             }
             else
             {
-                this->vprintfCLI("E: Unknown command type \'%s\'\r\n", command_type.c_str());
+                this->printfCLI("E: Unknown command type \'%s\'\r\n", command_type.c_str());
             }
 
             //free the memory used by mail for the message

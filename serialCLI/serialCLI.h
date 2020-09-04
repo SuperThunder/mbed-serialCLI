@@ -52,16 +52,19 @@ class serialCLI
 
         //Handles serial output by wrapping around write()
         //public so that main program threads can use the same interface
-        //TODO: make extra wrappers printfErrorLine, printfInfoLine, printfDataLine that prepend E:/I:/D: and append newline
-        void vprintfCLI(const char fmt[], ...);
-        //^named as vprintf because otherwise the compiler gets confused for something like printfCLI("val: %d", int1) and interprets int1 as a length
-        void printfCLI(const char* str, uint32_t len);
-        void printfCLI(std::string* str){ printfCLI(str->c_str(), str->length()); }
+        //TODO: make extra wrappers printfErrorLine, printfInfoLine, printfDataLine that prepend E:/I:/D: and append CRLF
+        void printfCLI(const char fmt[], ...);
+        //make call to write() of serial interface
+        //TODO: enqueue calls in an EventQueue that always dispatches instead? may be useful if the blocking of this call becomes a problem
+        void write(const char* str, uint32_t len){ this->serialInterface->write(str, len); };
+        
+        void printfCLI(std::string* str){ write(str->c_str(), str->length()); }
+
 
         ~serialCLI();
 
 
-    private:
+    private://TODO: Replace printfs with call to queue handled by thread
         //TODO: separate printf callback for debug messages?
         //Or as a way of thread-safe sharing of a serial port?
 
