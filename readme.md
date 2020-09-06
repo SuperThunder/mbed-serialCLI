@@ -8,11 +8,15 @@ Goal is to allow for easy basic command parsing of the form
 
 My motivating use case is to set and get parameters in an 18650 battery charging system, and be able to configure automated output.
 
+main.cpp is a small demo program - library is in serialCLI folder. Current resource use is 130kb flash, 13kb memory; for reference the blinky example is 37kb flash / 9.5kb memory.
+
 For now, effectively takes over the serial RX (read()) and uses the write() function to call for TX.
 
 TODO:
 - Consider attaching commands rather than variable names (get/set would be their own commands)
     - commands could live in their own header files per command or set of related commands
+- Get/set should possibly go into a dictionary (of mixed types?) that the running program can read
+    - Much cleaner than having to write a handler for each variable, but slower, much more RAM use, and less flexible
 
 
 Currently uses mbed 5.15, will update to mbed 6 when that's less broken.

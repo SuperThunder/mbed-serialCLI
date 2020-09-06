@@ -82,11 +82,11 @@ void serialCLI::inputReceiveThread()
     while(true)
     {
         //add any newly received chars to the buffer, but don't read more than remaining space in RXBUFFER
-		read_status = this->serialInterface->read(this->RXBUFFER+rxbuffer_index, CLI_RX_BUFFER_SIZE-rxbuffer_index);
+        read_status = this->serialInterface->read(this->RXBUFFER+rxbuffer_index, CLI_RX_BUFFER_SIZE-rxbuffer_index);
 		
         //if any bytes were read from serial
-		if(read_status > 0)
-		{
+        if(read_status > 0)
+        {
             for(int i=0; i < read_status; i++)
             {
                 cur_char = &( this->RXBUFFER[rxbuffer_index] );
