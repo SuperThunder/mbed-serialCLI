@@ -10,7 +10,7 @@
 //mbed 5
 UARTSerial pc(USBTX,USBRX,115200);
 
-uint32_t testint1 = 0;
+int32_t testint1 = 0;
 
 
 void blinkled()
@@ -48,10 +48,13 @@ void helpHandler(std::string* args, serialCLI::lineCommandType command_type, ser
 void setIntTest(std::string* args, serialCLI::lineCommandType command_type, serialCLI* cli)
 {
     int32_t tmpint;
+    std::string tmpstr;
     //if get, return value
     if(command_type == serialCLI::lineCommandType::GET)
     {
-        cli->printf("D: test1,%d\r\n", testint1);
+        //cli->printf("D: test1,%d\r\n", testint1);
+        tmpstr = "test1," + std::to_string(testint1);
+        cli->printLineMessage(serialCLI::lineMessageType::DATA, &tmpstr );
     }
     //if set, set value
     else if(command_type == serialCLI::lineCommandType::SET)
@@ -60,11 +63,15 @@ void setIntTest(std::string* args, serialCLI::lineCommandType command_type, seri
         if( str2int(tmpint, args->c_str() ) )
         {
             testint1 = tmpint;
-            cli->printf("I: testint1 set to '%d' \r\n", testint1);
+            tmpstr = "testint1 set to " + std::to_string(testint1);
+            cli->printLineMessage(serialCLI::lineMessageType::INFO, &tmpstr);
+            //cli->printf("I: testint1 set to '%d' \r\n", testint1);
         }
         else
         {
-            cli->printf("E: Invalid set value for testint1 '%s'\r\n", args->c_str());
+            //cli->printf("E: Invalid set value for testint1 '%s'\r\n", args->c_str());
+            tmpstr = "Invalid set value for testint1" + *args;
+            cli->printLineMessage(serialCLI::lineMessageType::ERROR, &tmpstr);
         }
     }
 
