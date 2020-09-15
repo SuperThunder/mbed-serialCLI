@@ -40,7 +40,7 @@ int32_t serialCLI::attachVariableHandler(std::string command, std::function<void
     return 0;
 }
 
-void serialCLI::printfCLI(const char fmt[], ...)
+void serialCLI::printf(const char fmt[], ...)
 {
     //sized to RX buffer size in case entire line needs to be written
     char buffer[CLI_RX_BUFFER_SIZE] = {0};
@@ -105,7 +105,7 @@ void serialCLI::inputReceiveThread()
                     //but send CR LF in either case
                     {
                         //if newline received, 
-                        this->printfCLI("\r\n");
+                        this->printf("\r\n");
                     }
                     
 
@@ -199,7 +199,7 @@ void serialCLI::inputProcessThread()
                 else
                 {
                     //show error if no matching variable name
-                    this->printfCLI("E: Unknown attached variable for GET \'%s\'\r\n", var_name.c_str() );
+                    this->printf("E: Unknown attached variable for GET \'%s\'\r\n", var_name.c_str() );
                 }
             }
             else if(command_type == "set" || command_type == "SET")
@@ -212,12 +212,12 @@ void serialCLI::inputProcessThread()
                 }
                 else
                 {
-                    this->printfCLI("E: Unknown attached variable for SET \'%s\'\r\n", var_name.c_str() );
+                    this->printf("E: Unknown attached variable for SET \'%s\'\r\n", var_name.c_str() );
                 }
             }
             else
             {
-                this->printfCLI("E: Unknown command type \'%s\'\r\n", command_type.c_str());
+                this->printf("E: Unknown command type \'%s\'\r\n", command_type.c_str());
             }
 
             //free the memory used by mail for the message
