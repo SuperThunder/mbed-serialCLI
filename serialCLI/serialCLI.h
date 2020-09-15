@@ -43,6 +43,13 @@ class serialCLI
             SET
         };
 
+        typedef enum class lineMessageType
+        {
+            INFO,
+            DATA,
+            ERROR
+        };
+
         //take the serial interface to read bytes from, and Thread variable from 
         serialCLI(UARTSerial* serialInterface);
 
@@ -59,6 +66,10 @@ class serialCLI
         void write(const char* str, uint32_t len){ this->serialInterface->write(str, len); };
         
         void printf(std::string* str){ write(str->c_str(), str->length()); }
+
+        void printLineMessage(serialCLI::lineMessageType, std::string* s);
+
+        //todo: printLineMessage(lineMessageType, fmt[], ...)
 
 
         ~serialCLI();

@@ -229,6 +229,27 @@ void serialCLI::inputProcessThread()
     }
 }
 
+void serialCLI::printLineMessage(serialCLI::lineMessageType outputType, std::string* s)
+{
+    std::string tmp = "";
+    switch(outputType)
+    {
+        case serialCLI::lineMessageType::INFO:
+            tmp += "I:" + *s + "\r\n";
+            break;
+
+        case serialCLI::lineMessageType::DATA:
+            tmp += "D:" + *s + "\r\n";
+            break;
+
+        case serialCLI::lineMessageType::ERROR:
+            tmp += "E:" + *s + "\r\n";
+            break;
+    }
+
+    this->printf(&tmp);
+}
+
 void serialCLI::wipeRXBuffer()
 {
     for(int i = 0; i < CLI_RX_BUFFER_SIZE; i++)   
