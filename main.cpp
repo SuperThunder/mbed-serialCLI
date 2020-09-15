@@ -39,7 +39,7 @@ bool str2int (int32_t &i, const char* s)
 
 void helpHandler(std::string* args, serialCLI::lineCommandType command_type, serialCLI* cli)
 {
-    cli->printfCLI("I: Help handler called with args: '%s'\r\n", args->c_str() );
+    cli->printf("I: Help handler called with args: '%s'\r\n", args->c_str() );
 }
 
 //test out setting of integer and error conditions
@@ -51,7 +51,7 @@ void setIntTest(std::string* args, serialCLI::lineCommandType command_type, seri
     //if get, return value
     if(command_type == serialCLI::lineCommandType::GET)
     {
-        cli->printfCLI("D: test1,%d\r\n", testint1);
+        cli->printf("D: test1,%d\r\n", testint1);
     }
     //if set, set value
     else if(command_type == serialCLI::lineCommandType::SET)
@@ -60,11 +60,11 @@ void setIntTest(std::string* args, serialCLI::lineCommandType command_type, seri
         if( str2int(tmpint, args->c_str() ) )
         {
             testint1 = tmpint;
-            cli->printfCLI("I: testint1 set to '%d' \r\n", testint1);
+            cli->printf("I: testint1 set to '%d' \r\n", testint1);
         }
         else
         {
-            cli->printfCLI("E: Invalid set value for testint1 '%s'\r\n", args->c_str());
+            cli->printf("E: Invalid set value for testint1 '%s'\r\n", args->c_str());
         }
     }
 
