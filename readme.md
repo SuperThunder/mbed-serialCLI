@@ -1,11 +1,12 @@
 
 ### Note: Better libraries exist
 At the time that I made this I was having difficulty finding any interactive shells made for mbed. However, they do exist, but don't show up on google very well:
-- shinichiro nakamura's Natural Tiny Shell mbed adaption by iotexpert (https://iotexpert.com/ntshell-for-mbed-os/)
-- shimniok SimpleShell (https://os.mbed.com/users/shimniok/code/SimpleShell/)
-- murilopontes tinyshell (https://os.mbed.com/users/murilopontes/code/tinyshell/)
-- vpcola SerialShell (https://os.mbed.com/users/vpcola/code/SerialShell/)
-- ChuckM console.c demo for STM32F469 (https://github.com/ChuckM/stm32f469i/blob/master/demos/util/console.c)
+* shinichiro nakamura's Natural Tiny Shell mbed adaption by iotexpert (https://iotexpert.com/ntshell-for-mbed-os/)
+* shimniok SimpleShell (https://os.mbed.com/users/shimniok/code/SimpleShell/)
+* murilopontes tinyshell (https://os.mbed.com/users/murilopontes/code/tinyshell/)
+* vpcola SerialShell (https://os.mbed.com/users/vpcola/code/SerialShell/)
+* ChuckM console.c demo for STM32F469 (https://github.com/ChuckM/stm32f469i/blob/master/demos/util/console.c)
+* * These demos are libopencm3, but cover almost all the functionality of an STM32F4 so are very instructive anyway
 
 Natural Tiny Shell in particular appears to be quite excellent and it's a shame it's not very well known.
 
