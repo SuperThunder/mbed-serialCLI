@@ -5,6 +5,7 @@ At the time that I made this I was having difficulty finding any interactive she
 - shimniok SimpleShell (https://os.mbed.com/users/shimniok/code/SimpleShell/)
 - murilopontes tinyshell (https://os.mbed.com/users/murilopontes/code/tinyshell/)
 - vpcola SerialShell (https://os.mbed.com/users/vpcola/code/SerialShell/)
+- ChuckM console.c demo for STM32F429 (https://github.com/ChuckM/stm32f469i/blob/master/demos/util/console.c)
 
 Natural Tiny Shell in particular appears to be quite excellent and it's a shame it's not very well known.
 
