@@ -1,3 +1,14 @@
+
+### Note: Better libraries exist
+At the time that I made this I was having difficulty finding any interactive shells made for mbed. However, they do exist, but don't show up on google very well:
+- shinichiro nakamura's Natural Tiny Shell mbed adaption by iotexpert (https://iotexpert.com/ntshell-for-mbed-os/)
+- shimniok SimpleShell (https://os.mbed.com/users/shimniok/code/SimpleShell/)
+- murilopontes tinyshell (https://os.mbed.com/users/murilopontes/code/tinyshell/)
+- vpcola SerialShell (https://os.mbed.com/users/vpcola/code/SerialShell/)
+
+Natural Tiny Shell in particular appears to be quite excellent and it's a shame it's not very well known.
+
+
 ## serialCLI for mbed
 Goal is to allow for easy basic command parsing of the form
 - get variablename
