@@ -8,8 +8,16 @@ At the time that I made this I was having difficulty finding any interactive she
 * ChuckM console.c demo for STM32F469 (https://github.com/ChuckM/stm32f469i/blob/master/demos/util/console.c)
 * * These demos are libopencm3, but cover almost all the functionality of an STM32F4 so are very instructive anyway
 
-Natural Tiny Shell in particular appears to be quite excellent and it's a shame it's not very well known.
 
+
+
+
+Natural Tiny Shell in particular appears to be quite excellent and it's a shame it's not very well known.  
+  
+  
+  
+  
+  
 
 ## serialCLI for mbed
 Goal is to allow for easy basic command parsing of the form
