@@ -2,7 +2,7 @@
 ### Note: Better libraries exist
 At the time that I made this I was having difficulty finding any interactive shells made for mbed. However, they do exist, but don't show up on google very well:
 * shinichiro nakamura's Natural Tiny Shell mbed adaption by iotexpert (https://iotexpert.com/ntshell-for-mbed-os/)
-* A (semi?) offical MbedOS command line?: https://github.com/PelionIoT/mbed-client-cli and https://os.mbed.com/docs/mbed-os/v6.15/mbed-os-api-doxy/ns__cmdline_8h.html#func-members
+* A (semi?) offical MbedOS command line?: https://github.com/PelionIoT/mbed-client-cli and https://os.mbed.com/docs/mbed-os/v6.15/mbed-os-api-doxy/ns__cmdline_8h.html#func-members. Not thread safe and not documented, but receives somewhat active updates? Genuinely confused why this wasn't made into a normal part of Mbed.
 * shimniok SimpleShell (https://os.mbed.com/users/shimniok/code/SimpleShell/)
 * murilopontes tinyshell (https://os.mbed.com/users/murilopontes/code/tinyshell/)
 * vpcola SerialShell (https://os.mbed.com/users/vpcola/code/SerialShell/)
